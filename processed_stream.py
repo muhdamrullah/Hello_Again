@@ -10,7 +10,7 @@ import calendar
 
 
 def convert_epoch(x):
-    t = (datetime.datetime( int((x.split(" ")[0]).split("-")[0]),  int(x.split(" ")[0].split("-")[1]),  int(x.split(" ")[0].split("-")[2]), int(x.split(" ")[1].split(":")[0]) ,   int(x.spl$
+    t = (datetime.datetime( int((x.split(" ")[0]).split("-")[0]),  int(x.split(" ")[0].split("-")[1]),  int(x.split(" ")[0].split("-")[2]), int(x.split(" ")[1].split(":")[0]) ,   int(x.split(" ")[1].split(":")[1])  , int(x.split(" ")[1].split(":")[2])))
     return calendar.timegm(t.timetuple())
 
 def convert_time(arr):
