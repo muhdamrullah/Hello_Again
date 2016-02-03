@@ -32,12 +32,13 @@ def cat_string(list_of_files):
 if not(os.path.isfile("./local_database.dat")):
     ascii.write([ np.array([]), np.array([]), np.array([])], names=['mac_by_session', 'first_seen', 'last_seen'], output='./local_database.dat')
 
+
 while True:
 
     try:
-        time_right_now = (datetime.datetime.now().time())
-        hour_right_now = time_right_now.hour
-        minute_right_now = time_right_now.minute
+#        time_right_now = (datetime.datetime.now().time())
+ #       hour_right_now = time_right_now.hour
+  #      minute_right_now = time_right_now.minute
 
         #if ((hour_right_now==16)&(minute_right_now<58)&(minute_right_now>=56)):
         if True:
@@ -60,10 +61,10 @@ while True:
                         switch = 0
                     if switch==1:
                         if line[0]!="\r":
+                            if (line.split(",")[0]!="Station MAC"):
+                                processed_line = line.split(",")[0]+","+ line.split(",")[1]+","+line.split(",")[2]+","+line.split(",")[3]+","+line.split(",")[4]+","+line.split(",")[5]+"\r"
+                                out_file.write(processed_line)
 
-                        if (line.split(",")[0]!="Station MAC"):
-                            processed_line = line.split(",")[0]+","+ line.split(",")[1]+","+line.split(",")[2]+","+line.split(",")[3]+","+line.split(",")[4]+","+line.split(",")[5]+"\r"
-                            out_file.write(processed_line)
 
             raffles = ascii.read("./onelevel/full_day_S.csv")
 
@@ -88,12 +89,13 @@ while True:
                 if (sorted_mac_r[x-1]==sorted_mac_r[x]) & (np.absolute(int(sorted_last_r[x-1])-int(sorted_first_r[x]))>300):
                     final_first_r = np.append(final_first_r, sorted_first_r[x])
                     final_mac_r = np.append(final_mac_r, sorted_mac_r[x])
-                    final_last_r = np.append(final_last_r, sorted_last_r[x])
+                    final_last_r = np.append(final_last_r, sorted_last_r[x])      
 
                 if (sorted_mac_r[x-1]==sorted_mac_r[x]) & (np.absolute(int(sorted_last_r[x-1])-int(sorted_first_r[x]))<=300):
                     final_last_r[-1] = int(sorted_last_r[x])
 
             ascii.write([final_mac_r, final_first_r, final_last_r], names=['mac_by_session', 'first_seen', 'last_seen'], output='./local_database.dat')
+            print "wrote to file"
 
     except (KeyboardInterrupt, SystemExit):
         raise
