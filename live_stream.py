@@ -60,6 +60,8 @@ while True:
         raffles = ascii.read("./onelevel/full_day_R.csv")
 
         current_time = (calendar.timegm(time.gmtime()))
+     
+        #ascii.write([np.unique(raffles['Station MAC'][(calendar.timegm(time.gmtime()) + 8*60*60 - convert_time(raffles['Last time seen']))<70])], names=['macs'], output='./live_stream.dat')
         ascii.write([np.unique(raffles['Station MAC'][(calendar.timegm(time.gmtime()) - convert_time(raffles['Last time seen']))<70])], names=['macs'], output='./live_stream.dat')
         time.sleep(1)
         print "up and running"
