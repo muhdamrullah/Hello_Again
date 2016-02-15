@@ -26,7 +26,7 @@ def mainCommand():
             sent_already = np.array([])
 
         if (os.path.isfile("./trigger.dat")):
-            trigger_input = ascii.read("./trigger.dat")
+            trigger_input = ascii.read("./trigger.dat", guess=False)
             if len(trigger_input['mac'])>0:
 		print "Pass1"
 		additionalCondition = 1
@@ -72,7 +72,10 @@ def mainCommand():
                         ascii.write([np.append(sent_already['mac'], outbound_macs), np.append(sent_already['sent_time'],outbound_time)], names=['mac','sent_time'], output='./sent_list.dat')
 
 while True:
-    writeFile()
-    mainCommand()
-    print "Restarting..."
-    time.sleep(5)
+    try:
+        writeFile()
+        mainCommand()
+        print "Restarting..."
+        time.sleep(5)
+    except ValueError:
+    	pass
