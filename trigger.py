@@ -6,8 +6,14 @@ import time
 import numpy as np
 from astropy.io import ascii
 import glob
-from twilio.rest import TwilioRestClient
 import subprocess
+
+def findPhone(mac_address):
+    with open('../air-auth/database.csv') as dataBase:
+        for line in dataBase:
+	    column = line.split(', ')
+	    if mac_address in line:
+		return (column[2], column[1])
 
 def writeFile():
     if os.path.isfile("./sent_list.dat"):
@@ -28,16 +34,13 @@ def mainCommand():
         if (os.path.isfile("./trigger.dat")):
             trigger_input = ascii.read("./trigger.dat", guess=False)
             if len(trigger_input['mac'])>0:
-		print "Pass1"
 		additionalCondition = 1
 		time.sleep(1)
                 if len(sent_already["mac"])!=0:
 		  try:
-                    #trig_unique_1 = np.array([x if ((x not in sent_already['mac'])|( (x in sent_already['mac'])&(  np.max(sent_already['sent_time'][sent_already['mac']==x]) < calendar.tim$
                     trig_unique_1 = np.array([x if ((x not in sent_already['mac'])|( (x in sent_already['mac'])and(np.max(sent_already['sent_time'][sent_already['mac']==x]) < calendar.timegm(time.gmtime()) - 10*60))) else "-99" for x in trigger_input['mac']])
-
                     trig_unique_2 = ((trig_unique_1[trig_unique_1!="-99"]))
-                    print "Pass3"
+                    print "Success"
 		    print trig_unique_2
 		    additionalCondition = 0
 		  except Exception,e:
@@ -49,7 +52,7 @@ def mainCommand():
                 else:
                     trig_unique_1 = trigger_input['mac']
                     trig_unique_2 = trig_unique_1
-                    print "Pass2"
+                    print "Initializing"
 		    additionalCondition = 0
 
                 if len(trig_unique_2)>0:
@@ -63,7 +66,11 @@ def mainCommand():
                             print_message = "Mac:%s, Last Visited:%s, Time Spent:%s minutes \n"%(x, time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(trigger_input['last_seen'][trigger_input['mac']==x]+ 8*60*60 )) , (trigger_input['time_spent'][trigger_input['mac']==x]))
                             print print_message
 			    time.sleep(1)
-			    whatsapp_message = './yowsup-cli demos -c file.config -M -s 6584983348 "%s"' % print_message 
+			    namewithNumber = findPhone(x)
+			    if namewithNumber is None:
+				whatsapp_message = './yowsup-cli demos -c file.config -M -s 6584983348 "%s"' % print_message 
+			    else:
+			        whatsapp_message = './yowsup-cli demos -c file.config -M -s 65%s "%s, have you registered for Balik Kampung?"' % namewithNumber
 			    subprocess.call(whatsapp_message, shell=True)
 
                     if len(sent_already)==0:
@@ -75,7 +82,5 @@ while True:
     try:
         writeFile()
         mainCommand()
-        print "Restarting..."
-        time.sleep(5)
     except ValueError:
-    	pass
+	pass
